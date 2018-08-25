@@ -9,19 +9,16 @@ fn handle_client(mut stream: TcpStream) {
 
     println!("Request: {}", String::from_utf8_lossy(&buffer));
 
-    let mut contents = String::new();
-    let mut response = String::new();
+    let (status_line, filename) = if buffer.starts_with(b"GET / HTTP/1.1") {
+        ("HTTP/1.1 200 OK\r\n\r\n", "../html/hello.html")
+    } else {
+        ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "../html/404.html")
+    };
 
-    if buffer.starts_with(b"GET / HTTP/1.1") {
-        let mut file = File::open("../html/hello.html").unwrap();
-        file.read_to_string(&mut contents).unwrap();
-        response = format!("HTTP/1.1 200 OK\r\n\r\n{}", contents);
-    } else
-    {
-        let mut file = File::open("../html/404.html").unwrap();
-        file.read_to_string(&mut contents).unwrap();
-        response = format!("HTTP/1.1 404 NOT FOUND\r\n\r\n{}", contents);
-    }
+    let mut file = File::open(filename).unwrap();
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).unwrap();
+    let mut response = format!("{}{}", status_line,contents);
 
     println!("Response: {}", response);
 
