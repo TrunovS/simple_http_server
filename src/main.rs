@@ -2,6 +2,8 @@ use std::net::{TcpListener, TcpStream };
 use std::io::prelude::*;
 use std::io;
 use std::fs::File;
+use std::thread;
+use std::time::Duration;
 
 fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512];
@@ -11,8 +13,11 @@ fn handle_client(mut stream: TcpStream) {
 
     let (status_line, filename) = if buffer.starts_with(b"GET / HTTP/1.1") {
         ("HTTP/1.1 200 OK\r\n\r\n", "../html/hello.html")
-    } else {
-        ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "../html/404.html")
+    } else if buffer.starts_with(b"GET /sleep HTTP/1.1\r\n") {
+        thread::sleep(Duration::from_secs(5));
+        ("HTTP/1.1 200 OK\r\n\r\n", "../html/hello.html")
+    }else {
+            ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "../html/404.html")
     };
 
     let mut file = File::open(filename).unwrap();

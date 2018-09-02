@@ -3,4 +3,6 @@ name = "server"
 version = "0.1.0"
 authors = ["Trunov Sergey <trunovsergey@list.ru>"]
 
-[dependencies]
+[dependencies.thread_pool]
+path = "../thread_pool"
+version = "0.1.0"
