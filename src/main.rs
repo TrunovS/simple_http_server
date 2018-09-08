@@ -5,6 +5,9 @@ use std::fs::File;
 use std::thread;
 use std::time::Duration;
 
+extern crate thread_pool;
+use thread_pool::ThreadPool;
+
 fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512];
     stream.read(&mut buffer).unwrap();
@@ -34,8 +37,12 @@ fn handle_client(mut stream: TcpStream) {
 fn main() -> io::Result<()> {
     let lstener = TcpListener::bind("127.0.0.1:7878").unwrap();
 
+    let pool = ThreadPool::new(4);
+
     for stream in lstener.incoming() {
-        handle_client(stream?);
+        pool.execute(|| {
+            handle_client(stream.unwrap());
+        });
     }
     Ok(())
 }
