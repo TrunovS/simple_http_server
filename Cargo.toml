@@ -3,6 +3,5 @@ name = "server"
 version = "0.1.0"
 authors = ["Trunov Sergey <trunovsergey@list.ru>"]
 
-[dependencies.thread_pool]
-path = "../thread_pool"
-version = "0.1.0"
+[dependencies]
+thread_pool = { git = "https://github.com/TrunovS/simple_thread_pool", branch = "master", version = "0.1.0" }
